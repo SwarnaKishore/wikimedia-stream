@@ -3,19 +3,24 @@ import './App.css';
 import React, { Component } from 'react';
 
 class App extends Component {
-
+  eventSource;
   state = {
       data: []
   };
 
   componentDidMount() {
-      const eventSource = new EventSource(`https://stream.wikimedia.org/v2/stream/page-create`);
-      eventSource.onmessage = e => {
+      this.eventSource = new EventSource(`https://stream.wikimedia.org/v2/stream/page-create`);
+      this.eventSource.onmessage = e => {
       const result = JSON.parse(e.data);
       this.setState({
                     data: [result, ...this.state.data]
                 });
     };
+  }
+
+  componentWillUnmount() {
+    if(this.eventSource)
+    this.eventSource.close();
   }
 
   render() {
